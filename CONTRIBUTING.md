@@ -10,7 +10,6 @@ Short rules so the three of us can work in parallel without breaking each other.
 | Member 2 | ArrayStack, LinkedStack, ArrayQueue, LinkedQueue, SinglyLinkedList, DoublyLinkedList, user accounts and roles, trip history, admin tools |
 | Member 3 | README and docs, Trie, MergeSort, TripPlanner (recursive ordering), menu system, GeoJSON export, map viewer, test scripts, report |
 
-You write and test your own modules. Changing someone else's file? Tell them first.
 
 ## Daily routine
 
