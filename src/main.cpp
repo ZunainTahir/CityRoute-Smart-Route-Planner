@@ -1,9 +1,7 @@
-// CityRoute - Smart Route Planner
-// Entry point (skeleton). The real menu system is added by Member 3 (Days 6-16).
-
 #include <iostream>
+using namespace std;
 
 int main() {
-    std::cout << "CityRoute - Smart Route Planner (skeleton build)\n";
+    cout << "CityRoute - Smart Route Planner" << endl;
     return 0;
 }
