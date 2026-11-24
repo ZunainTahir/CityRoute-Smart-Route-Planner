@@ -1,62 +1,71 @@
 #pragma once
-// ---------------------------------------------------------------------------
-// Graph.h  --  INTERFACE CONTRACT (Day 1)
-// Owner: Member 1.  Implementation: src/Graph.cpp (Day 2 onwards).
-//
-// The road network: intersections are Nodes, road segments are Edges.
-// Adjacency lists use Member 2's SinglyLinkedList<T> (include/SinglyLinkedList.h,
-// due Day 3). Until then it is only forward-declared here.
-// ---------------------------------------------------------------------------
-
-#include <cstddef>
 #include <string>
-
-template <typename T>
-class SinglyLinkedList;  // provided by Member 2
+#include <unordered_map>
+#include "SinglyLinkedList.h"
+using namespace std;
 
 struct Node {
-    int index = -1;         // internal index 0..nodeCount-1
-    long long osmId = 0;    // original (huge, sparse) OpenStreetMap id
-    double lat = 0.0;       // degrees
-    double lon = 0.0;       // degrees
+    int index;
+    long long osmId;
+    double lat;
+    double lon;
+
+    Node() {
+        index = -1;
+        osmId = 0;
+        lat = 0;
+        lon = 0;
+    }
 };
 
 struct Edge {
-    int to = -1;            // index of the destination node
-    double distanceKm = 0.0;
-    double timeMin = 0.0;   // estimated from an average speed per road type
-    bool blocked = false;   // true = road closed by an Admin
-    std::string roadName;
+    int to;
+    double distanceKm;
+    double timeMin;
+    bool blocked;
+    string roadName;
+
+    Edge() {
+        to = -1;
+        distanceKm = 0;
+        timeMin = 0;
+        blocked = false;
+    }
 };
 
+typedef SinglyLinkedList<Edge>::ListNode EdgeNode;
+
 class Graph {
+private:
+    Node* nodes;
+    SinglyLinkedList<Edge>** adjacency;
+    int nodeCount;
+    int edgeCount;
+    int capacity;
+    unordered_map<long long, int> osmToIndex;
+
+    void grow();
+    bool validIndex(int index) const;
+
 public:
-    Graph();
+    Graph(int startCapacity = 1000);
     ~Graph();
 
-    // Adds an intersection and returns its internal index.
+    Graph(const Graph&) = delete;
+    Graph& operator=(const Graph&) = delete;
+
     int addNode(long long osmId, double lat, double lon);
 
-    // Adds a road segment from -> to. If oneWay is false the reverse edge
-    // (to -> from) is added automatically with the same weights.
-    void addEdge(int from, int to, double distanceKm, double timeMin,
-                 const std::string& roadName, bool oneWay);
+    bool addEdge(int from, int to, double distanceKm, double timeMin,
+                 const string& roadName, bool oneWay);
 
-    std::size_t nodeCount() const;
-    std::size_t edgeCount() const;
+    int getNodeCount() const;
+    int getEdgeCount() const;
 
-    // Node by internal index (0 <= index < nodeCount()).
-    const Node& node(int index) const;
+    const Node* getNode(int index) const;
+    const SinglyLinkedList<Edge>* getNeighbors(int index) const;
 
-    // Hash-map lookup: OSM id -> internal index, or -1 if unknown.
     int indexOfOsmId(long long osmId) const;
 
-    // Outgoing edges of a node.
-    const SinglyLinkedList<Edge>& neighbors(int index) const;
-
-    // Admin feature: close/open the edge from -> to (both directions are
-    // updated for two-way roads). Returns false if no such edge exists.
     bool setEdgeBlocked(int from, int to, bool blocked);
-
-    // Private data members are added together with the implementation.
 };
